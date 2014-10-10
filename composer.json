@@ -1,0 +1,25 @@
+{
+    "name": "credibility/dandb",
+    "description": "PHP Wrapper for Dun & Bradstreet Credibility Corp. API",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Credibility",
+            "email": "cr3p0@credibility.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "4.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*",
+        "mockery/mockery": "dev-master",
+        "satooshi/php-coveralls": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Credibility\\DandB": "src/"
+        }
+    }
+}
