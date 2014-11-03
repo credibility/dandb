@@ -24,12 +24,18 @@ class Requester {
 
     public function runGet($uri, $data = array(), $accessToken = null)
     {
-        return $this->formatRequest('GET', $uri, $data, $accessToken);
+        $requestData = array(
+            'query' => $data
+        );
+        return $this->formatRequest('GET', $uri, $requestData, $accessToken);
     }
 
     public function runPost($uri, $data = array(), $accessToken = null)
     {
-        return $this->formatRequest('POST', $uri, $data, $accessToken);
+        $requestData = array(
+            'body' => $data
+        );
+        return $this->formatRequest('POST', $uri, $requestData, $accessToken);
     }
 
     public function formatRequest($method, $uri, $data = array(), $accessToken = null)

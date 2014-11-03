@@ -23,6 +23,13 @@ class DandBTest extends PHPUnit_Framework_TestCase {
         m::close();
     }
 
+    public function testGetInstance()
+    {
+        $dandb = DandB::getInstance('test-client', 'test-secret');
+
+        $this->assertInstanceOf('Credibility\DandB\DandB', $dandb);
+    }
+
     public function testGetAccessToken()
     {
         $this->mockRequester->shouldReceive('getAccessToken')
@@ -35,7 +42,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runGet')->with(
             '/v1/business/search/international',
-            array('query' => array('duns' => 'test-duns')),
+            array('duns' => 'test-duns'),
             null
         )->once();
 
@@ -46,7 +53,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runGet')->with(
             '/v1/business/search/international',
-            array('query' => array('name' => 'test-name', 'country' => 'test-country')),
+            array('name' => 'test-name', 'country' => 'test-country'),
             null
         )->once();
 
@@ -57,7 +64,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runGet')->with(
             '/v1/business/search',
-            array('query' => array('name' => 'test-name', 'state' => 'test-state')),
+            array('name' => 'test-name', 'state' => 'test-state'),
             null
         )->once();
 
@@ -68,13 +75,13 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runGet')->with(
             '/v1/business/search',
-            array('query' => array(
+            array(
                 'name' => 'test-name',
                 'state' => 'test-state',
                 'address' => 'test-address',
                 'city' => 'test-city',
                 'zip' => 'test-zip',
-            )),
+            ),
             null
         )->once();
 
@@ -91,7 +98,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runGet')->with(
             '/v1/business/search',
-            array('query' => array('duns' => 'test-duns')),
+            array('duns' => 'test-duns'),
             null
         )->once();
 
@@ -102,7 +109,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runGet')->with(
             '/v1/business/search',
-            array('query' => array('phone' => '2222222222')),
+            array('phone' => '2222222222'),
             null
         )->once();
 
@@ -128,7 +135,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
 
         $this->mockRequester->shouldReceive('runGet')->with(
             "/v1/verified/$duns",
-            array('query' => array('duns' => true)),
+            array('duns' => true),
             null
         )->once();
 
@@ -139,7 +146,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runPost')->with(
             '/v1/user/token',
-            array('body' => array('email' => 'test@test.com', 'password' => 'test-pass')),
+            array('email' => 'test@test.com', 'password' => 'test-pass'),
             null
         )->once();
 
@@ -150,7 +157,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runGet')->with(
             '/v1.1/user/entitlements',
-            array('query' => array('user_token' => 'test-user-token')),
+            array('user_token' => 'test-user-token'),
             null
         )->once();
 
@@ -161,7 +168,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runPost')->with(
             '/v1/user/token/refresh',
-            array('body' => array('email' => 'test@test.com', 'refresh_token' => 'test-refresh')),
+            array('email' => 'test@test.com', 'refresh_token' => 'test-refresh'),
             'access_token'
         )->once();
 
@@ -172,7 +179,7 @@ class DandBTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockRequester->shouldReceive('runGet')->with(
             '/v1/user/token',
-            array('query' => array('user_token' => 'test-user')),
+            array('user_token' => 'test-user'),
             null
         )->once();
 
