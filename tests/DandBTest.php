@@ -23,6 +23,13 @@ class DandBTest extends PHPUnit_Framework_TestCase {
         m::close();
     }
 
+    public function testGetInstance()
+    {
+        $dandb = DandB::getInstance('test-client', 'test-secret');
+
+        $this->assertInstanceOf('Credibility\DandB\DandB', $dandb);
+    }
+
     public function testGetAccessToken()
     {
         $this->mockRequester->shouldReceive('getAccessToken')

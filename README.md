@@ -23,15 +23,8 @@ See below for sample initialization code:
     
     include_once 'vendor/autoload.php';
     
-    /** 
-     * The first parameter is the Host, the second is an array of Guzzle options
-     * for the guzzle client directly
-     */
-    $clientFactory = new Credibility\DandB\ClientFactory('https://api.dandb.com', array());
-    
-    $requester = new Credibility\DandB\Requester($clientFactory, 'client-id', 'client-secret');
-    
-    $dandb = new Credibility\DandB\DandB($requester);
+    // See Doc Comments for parameters
+    $dandb = DandB::getInstance('https://api.dandb.com', 'client-id', 'client-secret', array());
     
     //From here, you can use the $dandb object to make requests. See PHP Doc comments in the class for info on how to use.
     

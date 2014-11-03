@@ -17,6 +17,25 @@ class DandB {
     }
 
     /**
+     * Factory method to create DandB object
+     * @param string $baseUrl
+     * @param $clientId
+     * @param $clientSecret
+     * @param array $guzzleOpts
+     * @return DandB
+     */
+    public static function getInstance(
+        $clientId, $clientSecret,
+        $baseUrl = 'https://api.dandb.com',
+        $guzzleOpts = array()
+    )
+    {
+        $clientFactory = new ClientFactory($baseUrl, $guzzleOpts);
+        $requester = new Requester($clientFactory, $clientId, $clientSecret);
+        return new DandB($requester);
+    }
+
+    /**
      * Returns an access token if available, otherwise false.
      * Note: tokens last for 1 hour. It's up to the client to
      * cache this token if needed
