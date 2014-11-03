@@ -2,6 +2,7 @@ Dun &amp; Bradstreet Credibility Corp. [UNOFFICIAL]
 =====
 [![Build Status](https://travis-ci.org/credibility/dandb.svg)](https://travis-ci.org/credibility/dandb)
 [![Coverage Status](https://img.shields.io/coveralls/credibility/dandb.svg)](https://coveralls.io/r/credibility/dandb)
+[![Packagist](http://img.shields.io/packagist/v/credibility/dandb.svg)](https://packagist.org/packages/credibility/dandb)
 
 PHP Wrapper for the Dun &amp; Bradstreet Credibility Corp. RESTful API
 
