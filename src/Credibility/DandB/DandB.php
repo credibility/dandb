@@ -42,9 +42,7 @@ class DandB {
     public function internationalSearchByDuns($duns, $accessToken = null)
     {
         return $this->requester->runGet('/v1/business/search/international', array(
-            'query' => array(
-                'duns' => $duns,
-            )
+            'duns' => $duns,
         ), $accessToken);
     }
 
@@ -62,10 +60,8 @@ class DandB {
     public function internationalSearchByNameCountry($name, $country, $accessToken = null)
     {
         return $this->requester->runGet('/v1/business/search/international', array(
-            'query' => array(
-                'name' => $name,
-                'country' => $country,
-            )
+            'name' => $name,
+            'country' => $country,
         ), $accessToken);
     }
 
@@ -80,9 +76,7 @@ class DandB {
     public function businessSearchByDuns($duns, $accessToken = null)
     {
         return $this->requester->runGet('/v1/business/search', array(
-            'query' => array(
-                'duns' => $duns,
-            )
+            'duns' => $duns,
         ), $accessToken);
 
     }
@@ -110,9 +104,7 @@ class DandB {
         if(!is_null($city)) { $array['city'] = $city; }
         if(!is_null($zip)) { $array['zip'] = $zip; }
 
-        $requestParam = array('query' => $array);
-
-        return $this->requester->runGet('/v1/business/search', $requestParam, $accessToken);
+        return $this->requester->runGet('/v1/business/search', $array, $accessToken);
     }
 
     /**
@@ -126,9 +118,7 @@ class DandB {
     public function businessSearchByPhone($phone, $accessToken = null)
     {
         return $this->requester->runGet('/v1/business/search', array(
-            'query' => array(
-                'phone' => $phone
-            )
+            'phone' => $phone
         ), $accessToken);
     }
 
@@ -156,7 +146,7 @@ class DandB {
     public function verifiedProfileWithDuns($duns, $accessToken = null)
     {
         return $this->requester->runGet("/v1/verified/$duns", array(
-            'query' => array('duns' => true)
+           'duns' => true
         ), $accessToken);
     }
 
@@ -172,10 +162,8 @@ class DandB {
     public function userToken($email, $password, $accessToken = null)
     {
         return $this->requester->runPost('/v1/user/token', array(
-            'body' => array(
-                'email' => $email,
-                'password' => $password
-            )
+            'email' => $email,
+            'password' => $password
         ), $accessToken);
     }
 
@@ -191,9 +179,7 @@ class DandB {
     public function userEntitlements($userToken, $accessToken = null)
     {
         return $this->requester->runGet('/v1.1/user/entitlements', array(
-            'query' => array(
-                'user_token' => $userToken
-            )
+            'user_token' => $userToken
         ), $accessToken);
     }
 
@@ -211,10 +197,8 @@ class DandB {
     public function userTokenRefresh($email, $refreshToken, $accessToken = null)
     {
         return $this->requester->runPost('/v1/user/token/refresh', array(
-            'body' => array(
-                'email' => $email,
-                'refresh_token' => $refreshToken
-            )
+            'email' => $email,
+            'refresh_token' => $refreshToken
         ), $accessToken);
     }
 
@@ -230,9 +214,7 @@ class DandB {
     public function userTokenStatus($userToken, $accessToken = null)
     {
         return $this->requester->runGet('/v1/user/token', array(
-            'query' => array(
-                'user_token' => $userToken
-            )
+            'user_token' => $userToken
         ), $accessToken);
     }
 
