@@ -1,52 +1,80 @@
-<?php
+<?php namespace Credibility\DandB\Cache;
 
-namespace Credibility\DandB\Cache;
-
-/**
- * Interface for cache to allow DandBAuth to utilize various frameworks for caching
- * copied from Guzzle\Cache\CacheAdapterInterface
- */
-interface CacheableInterface
-{
-    /**
-     * Test if an entry exists in the cache.
-     *
-     * @param string $id      cache id The cache id of the entry to check for.
-     * @param array  $options Array of cache adapter options
-     *
-     * @return bool Returns TRUE if a cache entry exists for the given cache id, FALSE otherwise.
-     */
-    public function contains($id, array $options = null);
+interface CacheableInterface {
 
     /**
-     * Deletes a cache entry.
+     * Retrieve an item from the cache by key.
      *
-     * @param string $id      cache id
-     * @param array  $options Array of cache adapter options
-     *
-     * @return bool TRUE on success, FALSE on failure
+     * @param  string  $key
+     * @return mixed
      */
-    public function delete($id, array $options = null);
+    public function get($key);
 
     /**
-     * Fetches an entry from the cache.
+     * Returns whether an item exists or not
      *
-     * @param string $id      cache id The id of the cache entry to fetch.
-     * @param array  $options Array of cache adapter options
-     *
-     * @return string The cached data or FALSE, if no cache entry exists for the given id.
+     * @param $key
+     * @return boolean
      */
-    public function fetch($id, array $options = null);
+    public function has($key);
 
     /**
-     * Puts data into the cache.
+     * Store an item in the cache for a given number of minutes.
      *
-     * @param string   $id       The cache id
-     * @param string   $data     The cache entry/data
-     * @param int|bool $lifeTime The lifetime. If != false, sets a specific lifetime for this cache entry
-     * @param array    $options  Array of cache adapter options
-     *
-     * @return bool TRUE if the entry was successfully stored in the cache, FALSE otherwise.
+     * @param  string  $key
+     * @param  mixed   $value
+     * @param  int     $minutes
+     * @return void
      */
-    public function save($id, $data, $lifeTime = false, array $options = null);
+    public function put($key, $value, $minutes);
+
+    /**
+     * Increment the value of an item in the cache.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function increment($key, $value = 1);
+
+    /**
+     * Decrement the value of an item in the cache.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function decrement($key, $value = 1);
+
+    /**
+     * Store an item in the cache indefinitely.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function forever($key, $value);
+
+    /**
+     * Remove an item from the cache.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function forget($key);
+
+    /**
+     * Remove all items from the cache.
+     *
+     * @return void
+     */
+    public function flush();
+
+    /**
+     * Get the cache key prefix.
+     *
+     * @return string
+     */
+    public function getPrefix();
+
 }

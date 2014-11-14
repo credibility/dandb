@@ -11,18 +11,10 @@ class DandB {
 
     /** @var Requester */
     protected $requester;
-    private $cache;
-    private $clientId;
-    private $clientSecret;
 
-    public function __construct($clientId, $clientSecret, Requester $requester, CacheableInterface $cacheableInterface = null, array $options = null)
+    public function __construct(Requester $requester)
     {
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
         $this->requester = $requester;
-        $this->cache = $cacheableInterface;
-        $options['access-token-key'] = empty($options['access-token-key']) ? 'dbcc-access-token' : $options['access-token-key'];
-        $this->options = $options;
     }
 
     /**
@@ -36,12 +28,14 @@ class DandB {
     public static function getInstance(
         $clientId, $clientSecret,
         $baseUrl = 'https://api.dandb.com',
-        $guzzleOpts = array()
+        $guzzleOpts = array(),
+        CacheableInterface $cache = null,
+        $accessToken = null
     )
     {
         $clientFactory = new ClientFactory($baseUrl, $guzzleOpts);
-        $requester = new Requester($clientFactory);
-        return new DandB($clientId, $clientSecret, $requester);
+        $requester = new Requester($clientFactory, $clientId, $clientSecret, $cache, $accessToken);
+        return new DandB($requester);
     }
 
     /**
@@ -54,31 +48,7 @@ class DandB {
      */
     public function getAccessToken()
     {
-        $cacheKey = $this->options['access-token-key'];
-        if($this->cache) {
-
-            if ($this->cache->has($cacheKey)) {
-                return $this->cache->get($cacheKey);
-            }
-        }
-
-        /** @var ResponseInterface $response */
-        /** @noinspection PhpVoidFunctionResultUsedInspection */
-        $response = $this->requester->runPost('/v1/oauth/token', false, array(
-                'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret,
-                'grant_type' => 'client_credentials'
-            )
-        );
-
-        if(isset($response['access_token'])) {
-            $key = $response['access_token'];
-            if($this->cache) {
-                $this->cache->set($cacheKey, $key);
-            }
-            return $key;
-        }
-        return false;
+        return $this->requester->getAccessToken();
     }
 
     /**
@@ -87,7 +57,6 @@ class DandB {
      * Returns an array of results or false if an error occurred
      *
      * @param $duns
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
@@ -105,7 +74,6 @@ class DandB {
      *
      * @param $name
      * @param $country
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */

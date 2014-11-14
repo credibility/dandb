@@ -25,7 +25,7 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->mockClientFactory->shouldReceive('createClient')
             ->andReturn($this->mockGuzzle);
 
-        $this->requester = new Requester($this->mockClientFactory, $this->clientId, $this->clientSecret);
+        $this->requester = new Requester($this->mockClientFactory, $this->clientId, $this->clientSecret, null, self::MOCK_ACCESS_TOKEN);
     }
 
     public function tearDown()
@@ -36,7 +36,7 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
     public function testGetAccessTokenSuccess()
     {
         $mockResponse = $this->getMockAccessTokenResponse(
-            array('access_token' => 'test-token')
+            array('access_token' => self::MOCK_ACCESS_TOKEN)
         );
 
         $this->mockGuzzle->shouldReceive('post')
@@ -45,20 +45,7 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
 
         $accessToken = $this->requester->getAccessToken();
 
-        $this->assertEquals('test-token', $accessToken);
-    }
-
-    public function testGetAccessTokenError()
-    {
-        $mockResponse = $this->getMockAccessTokenResponse(array());
-
-        $this->mockGuzzle->shouldReceive('post')
-            ->with('/v1/oauth/token', m::any())
-            ->andReturn($mockResponse);
-
-        $shouldBeFalse = $this->requester->getAccessToken();
-
-        $this->assertFalse($shouldBeFalse);
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $accessToken);
     }
 
     public function testCreateRequestParams()
@@ -67,10 +54,10 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
             'test' => 'value'
         );
 
-        $params = $this->requester->createRequestParams($data, 'test-token');
+        $params = $this->requester->createRequestParams($data);
 
         $this->assertArrayHasKey('headers', $params);
-        $this->assertEquals('test-token', $params['headers']['x-access-token']);
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $params['headers']['x-access-token']);
 
         $this->assertArrayHasKey('test', $params);
         $this->assertEquals('value', $params['test']);
@@ -78,16 +65,16 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
 
     public function testCreateRequestParamsForEmptyArray()
     {
-        $params = $this->requester->createRequestParams(array(), 'test-token');
+        $params = $this->requester->createRequestParams(array());
 
         $this->assertArrayHasKey('headers', $params);
-        $this->assertEquals('test-token', $params['headers']['x-access-token']);
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $params['headers']['x-access-token']);
     }
 
     public function testRunGetWithAccessToken()
     {
         $testArray = $this->setHttpMethodExpectations();
-        $mockAccessToken = 'test-token';
+        $mockAccessToken = self::MOCK_ACCESS_TOKEN;
 
         $response = $this->requester->runGet('test-uri', $testArray, $mockAccessToken);
 
