@@ -15,37 +15,29 @@ class Requester {
     /** @var Client */
     protected $guzzleClient;
 
-    public function __construct(ClientFactory $clientFactory, $clientId, $clientSecret)
+    public function __construct(ClientFactory $clientFactory)
     {
         $this->guzzleClient = $clientFactory->createClient();
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
     }
 
-    public function runGet($uri, $data = array(), $accessToken = null)
+    public function runGet($uri, $accessToken, $data = array())
     {
         $requestData = array(
             'query' => $data
         );
-        return $this->formatRequest('GET', $uri, $requestData, $accessToken);
+        return $this->formatRequest('GET', $uri, $accessToken, $requestData);
     }
 
-    public function runPost($uri, $data = array(), $accessToken = null)
+    public function runPost($uri, $accessToken = false, $data = array())
     {
         $requestData = array(
             'body' => $data
         );
-        return $this->formatRequest('POST', $uri, $requestData, $accessToken);
+        return $this->formatRequest('POST', $uri, $accessToken, $requestData);
     }
 
-    public function formatRequest($method, $uri, $data = array(), $accessToken = null)
+    public function formatRequest($method, $uri, $accessToken, $data = array())
     {
-        if(is_null($accessToken)) {
-            if(is_string($token = $this->getAccessToken())) {
-                $accessToken = $token;
-            }
-        }
-
         $requestParams = $this->createRequestParams($data, $accessToken);
 
         return $this->execute($method, $uri, $requestParams);
@@ -62,11 +54,10 @@ class Requester {
 
     public function createRequestParams($data, $accessToken)
     {
-        $header = array(
-            'headers' => array(
-                'x-access-token' => $accessToken
-        ));
-
+        $header = array('headers' => array());
+        if($accessToken) {
+            $header['headers']['x-access-token'] = $accessToken;
+        }
         if(count($data) == 0) {
             return $header;
         } else {
