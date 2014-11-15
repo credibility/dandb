@@ -36,7 +36,7 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
     public function testGetAccessTokenSuccess()
     {
         $mockResponse = $this->getMockAccessTokenResponse(
-            array('access_token' => self::MOCK_ACCESS_TOKEN)
+            array()//access_token is passed to the constructor
         );
 
         $this->mockGuzzle->shouldReceive('post')
@@ -44,6 +44,23 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
             ->andReturn($mockResponse);
 
         $accessToken = $this->requester->getAccessToken();
+
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $accessToken);
+    }
+
+    public function testGetNewAccessTokenSuccess()
+    {
+        $mockResponse = $this->getMockAccessTokenResponse(
+            array('access_token' => self::MOCK_ACCESS_TOKEN)
+        );
+
+        $this->mockGuzzle->shouldReceive('post')
+            ->with('/v1/oauth/token', m::any())
+            ->andReturn($mockResponse);
+
+        //construct a new Requester, without an access_token
+        $testRequester = new Requester($this->mockClientFactory, $this->clientId, $this->clientSecret);
+        $accessToken = $testRequester->getAccessToken();
 
         $this->assertEquals(self::MOCK_ACCESS_TOKEN, $accessToken);
     }
