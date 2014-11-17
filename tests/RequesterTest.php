@@ -108,6 +108,28 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals('test-123', $requester->getAccessToken());
     }
 
+    public function testGetAccessTokenWithoutCache()
+    {
+        $requester = new Requester(
+            $this->mockClientFactory,
+            $this->clientId, $this->clientSecret,
+            null, null
+        );
+
+        $mockResponse = $this->getMockAccessTokenResponse(array(
+            'access_token' => self::MOCK_ACCESS_TOKEN
+        ));
+
+        $this->mockGuzzle->shouldReceive('post')
+            ->with('/v1/oauth/token', m::any())
+            ->once()
+            ->andReturn($mockResponse);
+
+        $token = $requester->getAccessToken();
+
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $token);
+    }
+
     public function testAccessTokenSetOnCacheMiss()
     {
         $requester = new Requester(
