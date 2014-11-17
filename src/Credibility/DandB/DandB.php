@@ -181,6 +181,21 @@ class DandB {
     }
 
     /**
+     * Returns User based on User Token
+     *
+     * @param $userToken
+     * @param null $accessToken
+     * @return \Credibility\DandB\Response
+     * @throws RequestException|LogicException|ParseException
+     */
+    public function userUsingToken($userToken, $accessToken = null)
+    {
+        return $this->requester->runGet('/v1/user/token/status', array(
+            'user_token' => $userToken
+        ), $accessToken);
+    }
+
+    /**
      * Returns User Entitlements based on User Token
      *
      * @see DandB::userToken
