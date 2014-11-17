@@ -4,6 +4,7 @@ use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Message\ResponseInterface;
+use Credibility\DandB\Cache\CacheableInterface;
 use LogicException;
 
 class DandB {
@@ -27,11 +28,13 @@ class DandB {
     public static function getInstance(
         $clientId, $clientSecret,
         $baseUrl = 'https://api.dandb.com',
-        $guzzleOpts = array()
+        $guzzleOpts = array(),
+        CacheableInterface $cache = null,
+        $accessToken = null
     )
     {
         $clientFactory = new ClientFactory($baseUrl, $guzzleOpts);
-        $requester = new Requester($clientFactory, $clientId, $clientSecret);
+        $requester = new Requester($clientFactory, $clientId, $clientSecret, $cache, $accessToken);
         return new DandB($requester);
     }
 
@@ -54,15 +57,14 @@ class DandB {
      * Returns an array of results or false if an error occurred
      *
      * @param $duns
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function internationalSearchByDuns($duns, $accessToken = null)
+    public function internationalSearchByDuns($duns)
     {
         return $this->requester->runGet('/v1/business/search/international', array(
             'duns' => $duns,
-        ), $accessToken);
+        ));
     }
 
     /**
@@ -72,32 +74,29 @@ class DandB {
      *
      * @param $name
      * @param $country
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function internationalSearchByNameCountry($name, $country, $accessToken = null)
+    public function internationalSearchByNameCountry($name, $country)
     {
         return $this->requester->runGet('/v1/business/search/international', array(
             'name' => $name,
             'country' => $country,
-        ), $accessToken);
+        ));
     }
 
     /**
      * Searches businesses based on DUNS Number
      *
      * @param $duns
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function businessSearchByDuns($duns, $accessToken = null)
+    public function businessSearchByDuns($duns)
     {
         return $this->requester->runGet('/v1/business/search', array(
             'duns' => $duns,
-        ), $accessToken);
-
+        ));
     }
 
     /**
@@ -108,11 +107,10 @@ class DandB {
      * @param null $address
      * @param null $city
      * @param null $zip
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function businessSearchByNameAddress($name, $state, $address = null, $city = null, $zip = null, $accessToken = null)
+    public function businessSearchByNameAddress($name, $state, $address = null, $city = null, $zip = null)
     {
         $array = array(
             'name' => $name,
@@ -123,50 +121,47 @@ class DandB {
         if(!is_null($city)) { $array['city'] = $city; }
         if(!is_null($zip)) { $array['zip'] = $zip; }
 
-        return $this->requester->runGet('/v1/business/search', $array, $accessToken);
+        return $this->requester->runGet('/v1/business/search', $array);
     }
 
     /**
      * Searches businesses by phone number
      *
      * @param $phone
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function businessSearchByPhone($phone, $accessToken = null)
+    public function businessSearchByPhone($phone)
     {
         return $this->requester->runGet('/v1/business/search', array(
             'phone' => $phone
-        ), $accessToken);
+        ));
     }
 
     /**
      * Returns Verified information based on D&B Enterprise Business ID
      *
      * @param $businessId
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function verifiedProfile($businessId, $accessToken = null)
+    public function verifiedProfile($businessId)
     {
-        return $this->requester->runGet("/v1/verified/$businessId", array(), $accessToken);
+        return $this->requester->runGet("/v1/verified/$businessId");
     }
 
     /**
      * Returns Verified information based on DUNS Number
      *
      * @param $duns
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function verifiedProfileWithDuns($duns, $accessToken = null)
+    public function verifiedProfileWithDuns($duns)
     {
         return $this->requester->runGet("/v1/verified/$duns", array(
            'duns' => true
-        ), $accessToken);
+        ));
     }
 
     /**
@@ -174,16 +169,15 @@ class DandB {
      *
      * @param $email
      * @param $password
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function userToken($email, $password, $accessToken = null)
+    public function userToken($email, $password)
     {
         return $this->requester->runPost('/v1/user/token', array(
             'email' => $email,
             'password' => $password
-        ), $accessToken);
+        ));
     }
 
     /**
@@ -191,15 +185,14 @@ class DandB {
      *
      * @see DandB::userToken
      * @param $userToken
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function userEntitlements($userToken, $accessToken = null)
+    public function userEntitlements($userToken)
     {
         return $this->requester->runGet('/v1.1/user/entitlements', array(
             'user_token' => $userToken
-        ), $accessToken);
+        ));
     }
 
     /**
@@ -209,16 +202,15 @@ class DandB {
      * @see DandB::userToken
      * @param $email
      * @param $refreshToken
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function userTokenRefresh($email, $refreshToken, $accessToken = null)
+    public function userTokenRefresh($email, $refreshToken)
     {
         return $this->requester->runPost('/v1/user/token/refresh', array(
             'email' => $email,
             'refresh_token' => $refreshToken
-        ), $accessToken);
+        ));
     }
 
     /**
@@ -226,16 +218,14 @@ class DandB {
      *
      * @see DandB::userToken
      * @param $userToken
-     * @param null $accessToken
      * @return \Credibility\DandB\Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function userTokenStatus($userToken, $accessToken = null)
+    public function userTokenStatus($userToken)
     {
         return $this->requester->runGet('/v1/user/token', array(
             'user_token' => $userToken
-        ), $accessToken);
+        ));
     }
-
 
 }

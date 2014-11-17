@@ -11,7 +11,11 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
 
     /** @var MockInterface */
     protected $mockGuzzle;
+    /** @var MockInterface */
     protected $mockClientFactory;
+    /** @var MockInterface */
+    protected $mockCache;
+
     /** @var Requester */
     protected $requester;
 
@@ -21,11 +25,18 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
     {
         $this->mockGuzzle = m::mock('GuzzleHttp\Client');
         $this->mockClientFactory = m::mock('Credibility\DandB\ClientFactory');
+        $this->mockCache = m::mock('Credibility\DandB\Cache\CacheableInterface');
 
         $this->mockClientFactory->shouldReceive('createClient')
             ->andReturn($this->mockGuzzle);
 
-        $this->requester = new Requester($this->mockClientFactory, $this->clientId, $this->clientSecret);
+        $this->requester = new Requester(
+            $this->mockClientFactory,
+            $this->clientId,
+            $this->clientSecret,
+            $this->mockCache,
+            self::MOCK_ACCESS_TOKEN
+        );
     }
 
     public function tearDown()
@@ -33,32 +44,118 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         m::close();
     }
 
-    public function testGetAccessTokenSuccess()
+    public function testPostAccessTokenSuccess()
     {
-        $mockResponse = $this->getMockAccessTokenResponse(
-            array('access_token' => 'test-token')
-        );
+        $mockResponse = $this->getMockAccessTokenResponse(array(
+            'access_token' => self::MOCK_ACCESS_TOKEN
+        ));
 
         $this->mockGuzzle->shouldReceive('post')
             ->with('/v1/oauth/token', m::any())
             ->andReturn($mockResponse);
 
-        $accessToken = $this->requester->getAccessToken();
+        $accessToken = $this->requester->postAccessToken();
 
-        $this->assertEquals('test-token', $accessToken);
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $accessToken);
     }
 
-    public function testGetAccessTokenError()
+    public function testPostAccessTokenReturnsFalse()
     {
-        $mockResponse = $this->getMockAccessTokenResponse(array());
+        $mockResponse = $this->getMockAccessTokenResponse([]);
 
         $this->mockGuzzle->shouldReceive('post')
             ->with('/v1/oauth/token', m::any())
             ->andReturn($mockResponse);
 
-        $shouldBeFalse = $this->requester->getAccessToken();
+        $this->assertFalse($this->requester->postAccessToken());
+    }
 
-        $this->assertFalse($shouldBeFalse);
+    public function testGetAccessTokenWhenSetInConstructor()
+    {
+        $requester = new Requester(
+            $this->mockClientFactory,
+            $this->clientId,
+            $this->clientSecret,
+            $this->mockCache,
+            'test-123'
+        );
+
+        $this->assertEquals('test-123', $requester->getAccessToken());
+    }
+
+    public function testCacheExistsSuccess()
+    {
+        $this->assertTrue($this->requester->cacheExists());
+    }
+
+    public function testCacheExistsFails()
+    {
+        $testRequester = new Requester($this->mockClientFactory, $this->clientId, $this->clientSecret);
+
+        $this->assertFalse($testRequester->cacheExists());
+    }
+
+    public function testGetAccessTokenWhenCached()
+    {
+        $requester = new Requester(
+            $this->mockClientFactory,
+            $this->clientId, $this->clientSecret,
+            $this->mockCache, null
+        );
+
+        $this->setCacheExpectations(true, 'test-123');
+
+        $this->assertEquals('test-123', $requester->getAccessToken());
+    }
+
+    public function testGetAccessTokenWithoutCache()
+    {
+        $requester = new Requester(
+            $this->mockClientFactory,
+            $this->clientId, $this->clientSecret,
+            null, null
+        );
+
+        $mockResponse = $this->getMockAccessTokenResponse(array(
+            'access_token' => self::MOCK_ACCESS_TOKEN
+        ));
+
+        $this->mockGuzzle->shouldReceive('post')
+            ->with('/v1/oauth/token', m::any())
+            ->once()
+            ->andReturn($mockResponse);
+
+        $token = $requester->getAccessToken();
+
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $token);
+    }
+
+    public function testAccessTokenSetOnCacheMiss()
+    {
+        $requester = new Requester(
+            $this->mockClientFactory,
+            $this->clientId, $this->clientSecret,
+            $this->mockCache, null
+        );
+
+        $this->mockCache->shouldReceive('has')
+            ->once()->andReturn(false);
+
+        $this->mockCache->shouldReceive('put')->once()
+            ->with(Requester::ACCESS_TOKEN_CACHE_KEY, self::MOCK_ACCESS_TOKEN, Requester::ACCESS_TOKEN_CACHE_TTL);
+
+        $mockResponse = $this->getMockAccessTokenResponse(array(
+            'access_token' => self::MOCK_ACCESS_TOKEN
+        ));
+
+        $this->mockGuzzle->shouldReceive('post')
+            ->with('/v1/oauth/token', m::any())
+            ->once()
+            ->andReturn($mockResponse);
+
+        $token = $requester->getAccessToken();
+
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $token);
     }
 
     public function testCreateRequestParams()
@@ -67,10 +164,10 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
             'test' => 'value'
         );
 
-        $params = $this->requester->createRequestParams($data, 'test-token');
+        $params = $this->requester->createRequestParams($data);
 
         $this->assertArrayHasKey('headers', $params);
-        $this->assertEquals('test-token', $params['headers']['x-access-token']);
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $params['headers']['x-access-token']);
 
         $this->assertArrayHasKey('test', $params);
         $this->assertEquals('value', $params['test']);
@@ -78,25 +175,28 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
 
     public function testCreateRequestParamsForEmptyArray()
     {
-        $params = $this->requester->createRequestParams(array(), 'test-token');
+        $params = $this->requester->createRequestParams(array());
 
         $this->assertArrayHasKey('headers', $params);
-        $this->assertEquals('test-token', $params['headers']['x-access-token']);
+        $this->assertEquals(self::MOCK_ACCESS_TOKEN, $params['headers']['x-access-token']);
     }
 
-    public function testRunGetWithAccessToken()
+    public function testFormatRequestCallsGetAccessToken()
     {
+        $this->setCacheExpectations(true, self::MOCK_ACCESS_TOKEN);
+
+        $requester = new Requester($this->mockClientFactory, $this->clientId, $this->clientSecret, $this->mockCache);
+
         $testArray = $this->setHttpMethodExpectations();
-        $mockAccessToken = 'test-token';
 
-        $response = $this->requester->runGet('test-uri', $testArray, $mockAccessToken);
-
+        $response = $requester->formatRequest('GET', 'test-uri');
         $this->assertInstanceOf('Credibility\DandB\Response', $response);
         $this->assertTrue($response->isValid());
         $this->assertArrayHasKey('business_name', $response->getResponseData());
+        $this->assertArrayHasKey('business_value', $response->getResponseData());
     }
 
-    public function testRunGetWithoutAccessToken()
+    public function testRunGet()
     {
         $testArray = $this->setHttpMethodExpectations();
         $response = $this->requester->runGet('test-uri', $testArray);
@@ -107,7 +207,7 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('business_value', $response->getResponseData());
     }
 
-    public function testRunPostWithAccessToken()
+    public function testRunPost()
     {
         $testArray = $this->setHttpMethodExpectations();
         $mockAccessToken = 'test-token';
@@ -117,18 +217,6 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Credibility\DandB\Response', $response);
         $this->assertTrue($response->isValid());
         $this->assertArrayHasKey('business_name', $response->getResponseData());
-    }
-
-    public function testRunPostWithoutAccessToken()
-    {
-        $testArray = $this->setHttpMethodExpectations();
-
-        $response = $this->requester->runPost('test-uri', $testArray);
-
-        $this->assertInstanceOf('Credibility\DandB\Response', $response);
-        $this->assertTrue($response->isValid());
-        $this->assertArrayHasKey('business_name', $response->getResponseData());
-        $this->assertArrayHasKey('business_value', $response->getResponseData());
     }
 
     protected function getMockResponseInterface($data)
@@ -194,5 +282,20 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
             ->andReturn($mockResponse);
         return $testArray;
     }
+
+    private function setCacheExpectations($hasCacheData, $cacheData = null, $dataToCache = null)
+    {
+        $this->mockCache->shouldReceive('has')
+            ->once()->andReturn($hasCacheData);
+
+        if($hasCacheData) {
+            $this->mockCache->shouldReceive('get')
+                ->once()->andReturn($cacheData);
+        } else {
+            $this->mockCache->shouldReceive('put')
+                ->once()->with($dataToCache);
+        }
+    }
+
 }
  
