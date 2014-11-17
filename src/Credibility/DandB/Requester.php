@@ -26,7 +26,12 @@ class Requester {
     /** @var string */
     protected $accessToken;
 
-    public function __construct(ClientFactory $clientFactory, $clientId, $clientSecret, CacheableInterface $cache = null, $accessToken = null)
+    public function __construct(
+        ClientFactory $clientFactory,
+        $clientId, $clientSecret,
+        CacheableInterface $cache = null,
+        $accessToken = null
+    )
     {
         $this->guzzleClient = $clientFactory->createClient();
         $this->clientId = $clientId;
@@ -35,25 +40,28 @@ class Requester {
         $this->accessToken = $accessToken;
     }
 
-    public function runGet($uri, $accessToken, $data = array())
+    public function runGet($uri, $data = array())
     {
         $requestData = array(
             'query' => $data
         );
-        return $this->formatRequest('GET', $uri, $accessToken, $requestData);
+        return $this->formatRequest('GET', $uri, $requestData);
     }
 
-    public function runPost($uri, $accessToken = false, $data = array())
+    public function runPost($uri, $data = array())
     {
         $requestData = array(
             'body' => $data
         );
-        return $this->formatRequest('POST', $uri, $accessToken, $requestData);
+        return $this->formatRequest('POST', $uri, $requestData);
     }
 
-    public function formatRequest($method, $uri, $accessToken, $data = array())
+    public function formatRequest($method, $uri, $data = array())
     {
-        $requestParams = $this->createRequestParams($data, $accessToken);
+        if(is_null($this->accessToken)) {
+            $this->accessToken = $this->getAccessToken();
+        }
+        $requestParams = $this->createRequestParams($data, $this->accessToken);
 
         return $this->execute($method, $uri, $requestParams);
     }
@@ -70,9 +78,7 @@ class Requester {
     public function createRequestParams($data)
     {
         $header = array('headers' => array());
-        if($accessToken = $this->getAccessToken()) {
-            $header['headers']['x-access-token'] = $accessToken;
-        }
+        $header['headers']['x-access-token'] = $this->accessToken;
         if(count($data) == 0) {
             return $header;
         } else {
@@ -96,6 +102,7 @@ class Requester {
             } else {
                 $token = $this->postAccessToken();
                 $this->cache->put(self::ACCESS_TOKEN_CACHE_KEY, $token, self::ACCESS_TOKEN_CACHE_TTL);
+                return $token;
             }
         }
 
