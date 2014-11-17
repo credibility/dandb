@@ -159,18 +159,22 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(self::MOCK_ACCESS_TOKEN, $params['headers']['x-access-token']);
     }
 
-    public function testRunGetWithAccessToken()
+    public function testFormatRequestCallsGetAccessToken()
     {
+        $this->setCacheExpectations(true, self::MOCK_ACCESS_TOKEN);
+
+        $requester = new Requester($this->mockClientFactory, $this->clientId, $this->clientSecret, $this->mockCache);
+
         $testArray = $this->setHttpMethodExpectations();
 
-        $response = $this->requester->runGet('test-uri', $testArray);
-
+        $response = $requester->formatRequest('GET', 'test-uri');
         $this->assertInstanceOf('Credibility\DandB\Response', $response);
         $this->assertTrue($response->isValid());
         $this->assertArrayHasKey('business_name', $response->getResponseData());
+        $this->assertArrayHasKey('business_value', $response->getResponseData());
     }
 
-    public function testRunGetWithoutAccessToken()
+    public function testRunGet()
     {
         $testArray = $this->setHttpMethodExpectations();
         $response = $this->requester->runGet('test-uri', $testArray);
@@ -181,7 +185,7 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('business_value', $response->getResponseData());
     }
 
-    public function testRunPostWithAccessToken()
+    public function testRunPost()
     {
         $testArray = $this->setHttpMethodExpectations();
         $mockAccessToken = 'test-token';
@@ -191,18 +195,6 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('Credibility\DandB\Response', $response);
         $this->assertTrue($response->isValid());
         $this->assertArrayHasKey('business_name', $response->getResponseData());
-    }
-
-    public function testRunPostWithoutAccessToken()
-    {
-        $testArray = $this->setHttpMethodExpectations();
-
-        $response = $this->requester->runPost('test-uri', $testArray);
-
-        $this->assertInstanceOf('Credibility\DandB\Response', $response);
-        $this->assertTrue($response->isValid());
-        $this->assertArrayHasKey('business_name', $response->getResponseData());
-        $this->assertArrayHasKey('business_value', $response->getResponseData());
     }
 
     protected function getMockResponseInterface($data)
