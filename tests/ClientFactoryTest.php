@@ -32,5 +32,14 @@ class ClientFactoryTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf('GuzzleHttp\Client', $client);
         $this->assertEquals($this->url, $client->getBaseUrl());
     }
+
+    public function testClientHasCorrectDefaults()
+    {
+        $client = $this->clientFactory->createClient();
+
+        $this->assertEquals(30, $client->getDefaultOption('timeout'));
+        $this->assertEquals(30, $client->getDefaultOption('connect_timeout'));
+    }
+
 }
  

@@ -20,9 +20,8 @@ class ClientFactory {
     {
         $config = array(
             'base_url' => $this->baseUrl,
+            'defaults' => $this->guzzleOpts
         );
-
-        $config = array_merge($config, $this->guzzleOpts);
 
         return new Client($config);
     }
