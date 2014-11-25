@@ -195,6 +195,33 @@ class DandB {
         ), $accessToken);
     }
 
+    public function passwordReset($email)
+    {
+        return $this->requester->runPost('/v1/user/password/reset', array(
+            'email' => $email
+        ));
+    }
+
+    public function changePassword($userToken, $oldPassword, $newPassword)
+    {
+        return $this->requester->runPost('/v1/user/password/change', array(
+            'user_token' => $userToken,
+            'old_password' => $oldPassword,
+            'new_password' => $newPassword
+        ));
+    }
+
+    public function userRegister($email, $firstName, $lastName, $password, $acceptedTOS)
+    {
+        return $this->requester->runPost('/v1.1/user/register', array(
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'email' => $email,
+            'password' => $password,
+            'accepted_tos' => $acceptedTOS
+        ));
+    }
+
     /**
      * Returns User Entitlements based on User Token
      *
