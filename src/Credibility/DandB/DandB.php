@@ -148,7 +148,7 @@ class DandB {
      */
     public function verifiedProfile($businessId)
     {
-        return $this->requester->runGet("/v1/verified/$businessId");
+        return $this->requester->runGet("/v1/verified/$businessId", array());
     }
 
     /**
@@ -214,7 +214,7 @@ class DandB {
      * @param  $newPassword
      * @return Response
      */
-    public function changePassword($userToken, $oldPassword, $newPassword)
+    public function passwordChange($userToken, $oldPassword, $newPassword)
     {
         return $this->requester->runPost('/v1/user/password/change', array(
             'user_token' => $userToken,

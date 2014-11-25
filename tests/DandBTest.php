@@ -36,6 +36,107 @@ class DandBTest extends PHPUnit_Framework_TestCase
         $this->dandb->getAccessToken();
     }
 
+    public function testVerifiedProfile()
+    {
+        $businessId = '123';
+
+        $this->setMockRequesterExpectations('runGet',
+            "/v1/verified/$businessId", array()
+        );
+
+        $this->dandb->verifiedProfile($businessId);
+    }
+
+    public function testVerifiedProfileWithDuns()
+    {
+        $businessDuns = '007280554';
+
+        $this->setMockRequesterExpectations('runGet',
+            "/v1/verified/$businessDuns", array('duns' => true)
+        );
+
+        $this->dandb->verifiedProfileWithDuns($businessDuns);
+    }
+
+    public function testUserToken()
+    {
+        $email = 'test@yopmail.com';
+        $password = 'Pass@123';
+
+        $this->setMockRequesterExpectations('runPost',
+            '/v1/user/token', array(
+                'email' => $email,
+                'password' => $password
+            )
+        );
+
+        $this->dandb->userToken($email, $password);
+    }
+
+    public function testUserUsingToken()
+    {
+        $userToken = 'abcde123';
+
+        $this->setMockRequesterExpectations('runGet',
+            '/v1/user/token/status', array(
+                'user_token' => $userToken,
+            )
+        );
+
+        $this->dandb->userUsingToken($userToken);
+    }
+
+    public function testPasswordReset()
+    {
+        $email = 'test@yopmail.com';
+
+        $this->setMockRequesterExpectations('runPost',
+            '/v1/user/password/reset', array(
+                'email' => $email,
+            )
+        );
+
+        $this->dandb->passwordReset($email);
+    }
+
+    public function testPasswordChange()
+    {
+        $userToken = 'abcde123';
+        $oldPassword = 'Pass@123';
+        $newPassword = 'Test@321';
+
+        $this->setMockRequesterExpectations('runPost',
+            '/v1/user/password/change', array(
+                'user_token' => $userToken,
+                'old_password' => $oldPassword,
+                'new_password' => $newPassword
+            )
+        );
+
+        $this->dandb->passwordChange($userToken, $oldPassword, $newPassword);
+    }
+
+    public function testUserRegister()
+    {
+        $email = 'test@yopmail.com';
+        $firstName = 'Test';
+        $lastName = 'McTester';
+        $password = 'Pass@123';
+        $acceptedTOS = 1;
+
+        $this->setMockRequesterExpectations('runPost',
+            '/v1.1/user/register', array(
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'email' => $email,
+                'password' => $password,
+                'accepted_tos' => $acceptedTOS
+            )
+        );
+
+        $this->dandb->userRegister($email, $firstName, $lastName, $password, $acceptedTOS);
+    }
+
     public function testInternationalSearch()
     {
         $duns = '999999999';
