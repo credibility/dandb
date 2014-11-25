@@ -208,7 +208,7 @@ class DandB {
             'user_token' => $userToken,
             'old_password' => $oldPassword,
             'new_password' => $newPassword
-        ), $accessToken);
+        ));
     }
 
     public function userRegister($email, $firstName, $lastName, $password, $acceptedTOS)
