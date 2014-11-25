@@ -228,18 +228,27 @@ class DandB {
      * @param  $email
      * @param  $firstName
      * @param  $lastName
+     * @param  $phone
      * @param  $password
      * @param  $acceptedTOS must be 1
      * @return Response
      */
-    public function userRegister($email, $firstName, $lastName, $password, $acceptedTOS)
+    public function userRegister($email, $first_name, $last_name, $accepted_tos, $password='', $phone_number='', $address_line_1='', $address_line_2='', $address_line_3='', $city='', $state_code='', $postal_code='', $source='')
     {
-        return $this->requester->runPost('/v1.1/user/register', array(
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'email' => $email,
-            'password' => $password,
-            'accepted_tos' => $acceptedTOS
+        return $this->requester->runPost('/v1.1/user/register', compact(
+            'email',
+            'first_name',
+            'last_name',
+            'accepted_tos',
+            'password',
+            'phone_number',
+            'address_line_1',
+            'address_line_2',
+            'address_line_3',
+            'city',
+            'state_code',
+            'postal_code',
+            'source'
         ));
     }
 
