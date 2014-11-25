@@ -36,6 +36,18 @@ class DandBTest extends PHPUnit_Framework_TestCase
         $this->dandb->getAccessToken();
     }
 
+    public function testBusinessSearchByPhone() {
+        $phone = '3235551234';
+
+        $this->setMockRequesterExpectations('runGet',
+            "/v1/business/search", array(
+                'phone' => $phone
+            )
+        );
+
+        $this->dandb->businessSearchByPhone($phone);
+    }
+
     public function testVerifiedProfile()
     {
         $businessId = '123';
@@ -135,6 +147,47 @@ class DandBTest extends PHPUnit_Framework_TestCase
         );
 
         $this->dandb->userRegister($email, $firstName, $lastName, $password, $acceptedTOS);
+    }
+
+    public function testUserEntitlements()
+    {
+        $userToken = 'abcde123';
+
+        $this->setMockRequesterExpectations('runGet',
+            '/v1.1/user/entitlements', array(
+                'user_token' => $userToken
+            )
+        );
+
+        $this->dandb->userEntitlements($userToken);
+    }
+
+    public function testUserTokenRefresh()
+    {
+        $email = 'test@yopmail.com';
+        $refreshToken = 'abcde123';
+
+        $this->setMockRequesterExpectations('runPost',
+            '/v1/user/token/refresh', array(
+                'email' => $email,
+                'refresh_token' => $refreshToken
+            )
+        );
+
+        $this->dandb->userTokenRefresh($email, $refreshToken);
+    }
+
+    public function testUserTokenStatus()
+    {
+        $userToken = 'abcde123';
+
+        $this->setMockRequesterExpectations('runGet',
+            '/v1/user/token', array(
+                'user_token' => $userToken
+            )
+        );
+
+        $this->dandb->userTokenStatus($userToken);
     }
 
     public function testInternationalSearch()
