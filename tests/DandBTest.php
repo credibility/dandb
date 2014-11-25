@@ -144,14 +144,7 @@ class DandBTest extends PHPUnit_Framework_TestCase
                 'email' => $email,
                 'phone_number' => $phone,
                 'password' => $password,
-                'accepted_tos' => $acceptedTOS,
-                'address_line_1' => '',
-                'address_line_2' => '',
-                'address_line_3' => '',
-                'city' => '',
-                'state_code' => '',
-                'postal_code' => '',
-                'source' => ''
+                'accepted_tos' => $acceptedTOS
             )
         );
 

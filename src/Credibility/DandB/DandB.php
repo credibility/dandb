@@ -233,23 +233,19 @@ class DandB {
      * @param  $acceptedTOS must be 1
      * @return Response
      */
-    public function userRegister($email, $first_name, $last_name, $accepted_tos, $password='', $phone_number='', $address_line_1='', $address_line_2='', $address_line_3='', $city='', $state_code='', $postal_code='', $source='')
+    public function userRegister($email, $first_name, $last_name, $accepted_tos, $password=null, $phone_number=null, $address_line_1=null, $address_line_2=null, $address_line_3=null, $city=null, $state_code=null, $postal_code=null, $source=null)
     {
-        return $this->requester->runPost('/v1.1/user/register', compact(
-            'email',
-            'first_name',
-            'last_name',
-            'accepted_tos',
-            'password',
-            'phone_number',
-            'address_line_1',
-            'address_line_2',
-            'address_line_3',
-            'city',
-            'state_code',
-            'postal_code',
-            'source'
-        ));
+        //required
+        $params = compact('email','first_name','last_name','accepted_tos');
+        //optional (only add to params if not empty)
+        $optionalParams = array('password','phone_number','address_line_1','address_line_2','address_line_3','city','state_code','postal_code','source');
+        foreach($optionalParams as $optional) {
+            if(!empty($$optional)) {
+                $params[$optional] = $$optional;
+            }
+        }
+
+        return $this->requester->runPost('/v1.1/user/register', $params);
     }
 
     /**
