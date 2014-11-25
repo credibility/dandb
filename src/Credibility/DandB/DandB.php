@@ -1,5 +1,6 @@
 <?php namespace Credibility\DandB;
 
+use Credibility\DandB\Response;
 use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Client;
@@ -57,13 +58,13 @@ class DandB {
      * Returns an array of results or false if an error occurred
      *
      * @param $duns
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function internationalSearchByDuns($duns)
     {
         return $this->requester->runGet('/v1/business/search/international', array(
-            'duns' => $duns,
+            'duns' => $duns
         ));
     }
 
@@ -74,7 +75,7 @@ class DandB {
      *
      * @param $name
      * @param $country
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function internationalSearchByNameCountry($name, $country)
@@ -89,7 +90,7 @@ class DandB {
      * Searches businesses based on DUNS Number
      *
      * @param $duns
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function businessSearchByDuns($duns)
@@ -107,7 +108,7 @@ class DandB {
      * @param null $address
      * @param null $city
      * @param null $zip
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function businessSearchByNameAddress($name, $state, $address = null, $city = null, $zip = null)
@@ -128,7 +129,7 @@ class DandB {
      * Searches businesses by phone number
      *
      * @param $phone
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function businessSearchByPhone($phone)
@@ -142,7 +143,7 @@ class DandB {
      * Returns Verified information based on D&B Enterprise Business ID
      *
      * @param $businessId
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function verifiedProfile($businessId)
@@ -154,7 +155,7 @@ class DandB {
      * Returns Verified information based on DUNS Number
      *
      * @param $duns
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function verifiedProfileWithDuns($duns)
@@ -169,7 +170,7 @@ class DandB {
      *
      * @param $email
      * @param $password
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userToken($email, $password)
@@ -184,17 +185,20 @@ class DandB {
      * Returns User based on User Token
      *
      * @param $userToken
-     * @param null $accessToken
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userUsingToken($userToken, $accessToken = null)
     {
         return $this->requester->runGet('/v1/user/token/status', array(
             'user_token' => $userToken
-        ), $accessToken);
+        ));
     }
 
+    /**
+     * @param $email
+     * @return Response
+     */
     public function passwordReset($email)
     {
         return $this->requester->runPost('/v1/user/password/reset', array(
@@ -227,7 +231,7 @@ class DandB {
      *
      * @see DandB::userToken
      * @param $userToken
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userEntitlements($userToken)
@@ -244,7 +248,7 @@ class DandB {
      * @see DandB::userToken
      * @param $email
      * @param $refreshToken
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userTokenRefresh($email, $refreshToken)
@@ -260,7 +264,7 @@ class DandB {
      *
      * @see DandB::userToken
      * @param $userToken
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userTokenStatus($userToken)
