@@ -1,5 +1,6 @@
 <?php namespace Credibility\DandB;
 
+use Credibility\DandB\Response;
 use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Client;
@@ -57,13 +58,13 @@ class DandB {
      * Returns an array of results or false if an error occurred
      *
      * @param $duns
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function internationalSearchByDuns($duns)
     {
         return $this->requester->runGet('/v1/business/search/international', array(
-            'duns' => $duns,
+            'duns' => $duns
         ));
     }
 
@@ -74,7 +75,7 @@ class DandB {
      *
      * @param $name
      * @param $country
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function internationalSearchByNameCountry($name, $country)
@@ -89,7 +90,7 @@ class DandB {
      * Searches businesses based on DUNS Number
      *
      * @param $duns
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function businessSearchByDuns($duns)
@@ -107,7 +108,7 @@ class DandB {
      * @param null $address
      * @param null $city
      * @param null $zip
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function businessSearchByNameAddress($name, $state, $address = null, $city = null, $zip = null)
@@ -128,7 +129,7 @@ class DandB {
      * Searches businesses by phone number
      *
      * @param $phone
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function businessSearchByPhone($phone)
@@ -142,19 +143,19 @@ class DandB {
      * Returns Verified information based on D&B Enterprise Business ID
      *
      * @param $businessId
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function verifiedProfile($businessId)
     {
-        return $this->requester->runGet("/v1/verified/$businessId");
+        return $this->requester->runGet("/v1/verified/$businessId", array());
     }
 
     /**
      * Returns Verified information based on DUNS Number
      *
      * @param $duns
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function verifiedProfileWithDuns($duns)
@@ -169,7 +170,7 @@ class DandB {
      *
      * @param $email
      * @param $password
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userToken($email, $password)
@@ -184,17 +185,21 @@ class DandB {
      * Returns User based on User Token
      *
      * @param $userToken
-     * @param null $accessToken
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userUsingToken($userToken, $accessToken = null)
     {
         return $this->requester->runGet('/v1/user/token/status', array(
             'user_token' => $userToken
-        ), $accessToken);
+        ));
     }
 
+    /**
+     * Send out an email from owl to reset the password
+     * @param $email
+     * @return Response
+     */
     public function passwordReset($email)
     {
         return $this->requester->runPost('/v1/user/password/reset', array(
@@ -202,7 +207,14 @@ class DandB {
         ));
     }
 
-    public function changePassword($userToken, $oldPassword, $newPassword)
+    /**
+     * Allow a user to change their password
+     * @param  $userToken
+     * @param  $oldPassword
+     * @param  $newPassword
+     * @return Response
+     */
+    public function passwordChange($userToken, $oldPassword, $newPassword)
     {
         return $this->requester->runPost('/v1/user/password/change', array(
             'user_token' => $userToken,
@@ -211,6 +223,15 @@ class DandB {
         ));
     }
 
+    /**
+     * Allow a user to register a new account
+     * @param  $email
+     * @param  $firstName
+     * @param  $lastName
+     * @param  $password
+     * @param  $acceptedTOS must be 1
+     * @return Response
+     */
     public function userRegister($email, $firstName, $lastName, $password, $acceptedTOS)
     {
         return $this->requester->runPost('/v1.1/user/register', array(
@@ -227,7 +248,7 @@ class DandB {
      *
      * @see DandB::userToken
      * @param $userToken
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userEntitlements($userToken)
@@ -244,7 +265,7 @@ class DandB {
      * @see DandB::userToken
      * @param $email
      * @param $refreshToken
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userTokenRefresh($email, $refreshToken)
@@ -260,7 +281,7 @@ class DandB {
      *
      * @see DandB::userToken
      * @param $userToken
-     * @return \Credibility\DandB\Response
+     * @return Response
      * @throws RequestException|LogicException|ParseException
      */
     public function userTokenStatus($userToken)
