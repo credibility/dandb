@@ -196,6 +196,7 @@ class DandB {
     }
 
     /**
+     * Send out an email from owl to reset the password
      * @param $email
      * @return Response
      */
@@ -206,6 +207,13 @@ class DandB {
         ));
     }
 
+    /**
+     * Allow a user to change their password
+     * @param  $userToken
+     * @param  $oldPassword
+     * @param  $newPassword
+     * @return Response
+     */
     public function changePassword($userToken, $oldPassword, $newPassword)
     {
         return $this->requester->runPost('/v1/user/password/change', array(
@@ -215,6 +223,15 @@ class DandB {
         ));
     }
 
+    /**
+     * Allow a user to register a new account
+     * @param  $email
+     * @param  $firstName
+     * @param  $lastName
+     * @param  $password
+     * @param  $acceptedTOS must be 1
+     * @return Response
+     */
     public function userRegister($email, $firstName, $lastName, $password, $acceptedTOS)
     {
         return $this->requester->runPost('/v1.1/user/register', array(
