@@ -133,6 +133,7 @@ class DandBTest extends PHPUnit_Framework_TestCase
         $email = 'test@yopmail.com';
         $firstName = 'Test';
         $lastName = 'McTester';
+        $phone = '3235551234';
         $password = 'Pass@123';
         $acceptedTOS = 1;
 
@@ -141,12 +142,20 @@ class DandBTest extends PHPUnit_Framework_TestCase
                 'first_name' => $firstName,
                 'last_name' => $lastName,
                 'email' => $email,
+                'phone_number' => $phone,
                 'password' => $password,
-                'accepted_tos' => $acceptedTOS
+                'accepted_tos' => $acceptedTOS,
+                'address_line_1' => '',
+                'address_line_2' => '',
+                'address_line_3' => '',
+                'city' => '',
+                'state_code' => '',
+                'postal_code' => '',
+                'source' => ''
             )
         );
 
-        $this->dandb->userRegister($email, $firstName, $lastName, $password, $acceptedTOS);
+        $this->dandb->userRegister($email, $firstName, $lastName, $acceptedTOS, $password, $phone);
     }
 
     public function testUserEntitlements()
