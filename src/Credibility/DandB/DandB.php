@@ -182,6 +182,17 @@ class DandB {
     }
 
     /**
+     * Logout a user from OWL
+     * @return Response
+     */
+    public function userLogout($userToken)
+    {
+        return $this->requester->runPost('/v1/user/logout', array(
+            'user_token' => $userToken
+        ));
+    }
+
+    /**
      * Returns User based on User Token
      *
      * @param $userToken
