@@ -85,6 +85,19 @@ class DandBTest extends PHPUnit_Framework_TestCase
         $this->dandb->userToken($email, $password);
     }
 
+    public function testUserLogout()
+    {
+        $userToken = 'abcde123';
+
+        $this->setMockRequesterExpectations('runPost',
+            '/v1/user/logout', array(
+                'user_token' => $userToken
+            )
+        );
+
+        $this->dandb->userLogout($userToken);
+    }
+
     public function testUserUsingToken()
     {
         $userToken = 'abcde123';
