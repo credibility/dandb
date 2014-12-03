@@ -111,6 +111,19 @@ class DandBTest extends PHPUnit_Framework_TestCase
         $this->dandb->userUsingToken($userToken);
     }
 
+    public function testUserFullDetails()
+    {
+        $userToken = 'abcde123';
+
+        $this->setMockRequesterExpectations('runGet',
+            '/v1.1/user', array(
+                'user_token' => $userToken,
+            )
+        );
+
+        $this->dandb->userFullDetails($userToken);
+    }
+
     public function testPasswordReset()
     {
         $email = 'test@yopmail.com';

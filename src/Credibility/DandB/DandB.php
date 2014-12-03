@@ -199,9 +199,23 @@ class DandB {
      * @return Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function userUsingToken($userToken, $accessToken = null)
+    public function userUsingToken($userToken)
     {
         return $this->requester->runGet('/v1/user/token/status', array(
+            'user_token' => $userToken
+        ));
+    }
+
+    /**
+     * Returns User based on User Token
+     *
+     * @param $userToken
+     * @return Response
+     * @throws RequestException|LogicException|ParseException
+     */
+    public function userFullDetails($userToken)
+    {
+        return $this->requester->runGet('/v1.1/user', array(
             'user_token' => $userToken
         ));
     }
