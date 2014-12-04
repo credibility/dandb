@@ -1,5 +1,6 @@
 <?php namespace Credibility\DandB;
 
+use Credibility\DandB\Models;
 use Mockery as m;
 use Mockery\MockInterface;
 use PHPUnit_Framework_TestCase;
@@ -193,9 +194,9 @@ class DandBTest extends PHPUnit_Framework_TestCase
     public function testAddUserEntitlements()
     {
         $userToken = 'abcde123';
-        $order = new DandBOrder();
-        $order->addProduct((new DandBProduct())->setProductId('1')->setPriceId('2'));
-        $agent = new DandBAgent();
+        $order = new Models\DandBOrder();
+        $order->addProduct((new Models\DandBProduct())->setProductId('1')->setPriceId('2'));
+        $agent = new Models\DandBAgent();
 
         $this->setMockRequesterExpectations('runPost',
             '/v1.1/user/entitlements', array(
@@ -220,10 +221,10 @@ class DandBTest extends PHPUnit_Framework_TestCase
     public function testAddSingleProductUserEntitlement()
     {
         $userToken = 'abcde123';
-        $order = new DandBOrder();
-        $order->addProduct((new DandBProduct())->setProductId('1')->setPriceId('2'));
+        $order = new Models\DandBOrder();
+        $order->addProduct((new Models\DandBProduct())->setProductId('1')->setPriceId('2'));
         $product = $order->getFirstProduct();
-        $agent = new DandBAgent();
+        $agent = new Models\DandBAgent();
 
         $this->setMockRequesterExpectations('runPost',
             '/v1.1/user/entitlement', array(
@@ -249,7 +250,7 @@ class DandBTest extends PHPUnit_Framework_TestCase
             )
         );
 
-        $this->dandb->addUserEntitlements($userToken, $order);
+        $this->dandb->addSingleProductUserEntitlement($userToken, $order);
     }
 
     public function testUserTokenRefresh()

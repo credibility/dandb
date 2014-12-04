@@ -1,6 +1,6 @@
 <?php
 
-namespace Credibility\DandB;
+namespace Credibility\DandB\Models;
 
 
 class BaseModel {

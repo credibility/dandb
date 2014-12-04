@@ -1,5 +1,6 @@
 <?php namespace Credibility\DandB;
 
+use Credibility\DandB\Models;
 use Credibility\DandB\Response;
 use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
@@ -297,8 +298,8 @@ class DandB {
      * @returns Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function addUserEntitlements($userToken, DandbOrder $order) {
-        $agent = $order->hasAgent() ? $order->getAgent() : new DandbAgent();
+    public function addUserEntitlements($userToken, Models\DandbOrder $order) {
+        $agent = $order->hasAgent() ? $order->getAgent() : new Models\DandbAgent();
 
         return $this->requester->runPost('/v1.1/user/entitlements', array(
             'user_token' => $userToken,
@@ -324,9 +325,9 @@ class DandB {
      * @returns Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function addSingleProductUserEntitlement($userToken, DandBOrder $order) {
-        $agent = $order->hasAgent() ? $order->getAgent() : new DandBAgent();
-        $product = $order->getFirstProduct() ? $order->getFirstProduct() : new DandBProduct();
+    public function addSingleProductUserEntitlement($userToken, Models\DandBOrder $order) {
+        $agent = $order->hasAgent() ? $order->getAgent() : new Models\DandBAgent();
+        $product = $order->getFirstProduct() ? $order->getFirstProduct() : new Models\DandBProduct();
 
         return $this->requester->runPost('/v1.1/user/entitlement', array(
             'user_token' => $userToken,

@@ -1,6 +1,6 @@
 <?php
 
-namespace Credibility\DandB;
+namespace Credibility\DandB\Models;
 
 class DandBOrder extends BaseModel {
 
@@ -69,7 +69,7 @@ class DandBOrder extends BaseModel {
      */
 
     public function setOrderLevelPromotionIdentifier($promotionIdentifier) {
-        $this->$orderLevelPromotionIdentifier = $promotionIdentifier;
+        $this->orderLevelPromotionIdentifier = $promotionIdentifier;
         return $this;
     }
 
@@ -168,7 +168,7 @@ class DandBOrder extends BaseModel {
      */
 
     public function getOrderLevelPromotionIdentifier() {
-        return $this->$orderLevelPromotionIdentifier;
+        return $this->orderLevelPromotionIdentifier;
     }
 
 
