@@ -190,6 +190,68 @@ class DandBTest extends PHPUnit_Framework_TestCase
         $this->dandb->userEntitlements($userToken);
     }
 
+    public function testAddUserEntitlements()
+    {
+        $userToken = 'abcde123';
+        $order = new DandBOrder();
+        $order->addProduct((new DandbProduct())->setProductId('1')->setPriceId('2'));
+        $agent = new DandbAgent();
+
+        $this->setMockRequesterExpectations('runPost',
+            '/v1.1/user/entitlements', array(
+                'user_token' => $userToken,
+                'payment_type' => $order->getPaymentType(),
+                'orders' => $order->getProductsArray(),
+                'agent_identifier' => $agent->getAgentId(),
+                'agent_office_code' => $agent->getAgentOfficeCode(),
+                'assigned_agent_code' => $agent->getAssignedAgentCode(),
+                'partner_identifier' => $order->getPartnerIdentifier(),
+                'order_level_promotion_identifier' => $order->getOrderLevelPromotionIdentifier(),
+                'case_reference_identifier' => $order->getCaseLevelIdentifier(),
+                'five9_session_identifier' => $order->getFive9SessionIdentifier(),
+                'order_payment_type_code' => $order->getPaymentTypeCode(),
+                'customer_group_domain_code' => $order->getCustomerGroupDomainCode()
+            )
+        );
+
+        $this->dandb->addUserEntitlements($userToken, $order);
+    }
+
+    public function testAddSingleProductUserEntitlement()
+    {
+        $userToken = 'abcde123';
+        $order = new DandBOrder();
+        $order->addProduct((new DandbProduct())->setProductId('1')->setPriceId('2'));
+        $product = $order->getFirstProduct();
+        $agent = new DandbAgent();
+
+        $this->setMockRequesterExpectations('runPost',
+            '/v1.1/user/entitlement', array(
+                'user_token' => $userToken,
+                'payment_type' => $order->getPaymentType(),
+                'send_confirmation_email' => $order->getSendConfirmationEmail(),
+                'product_id' => $product->getProductId(),
+                'price_id' => $product->getPriceId(),
+                'quantity' => $product->getQuantity(),
+                'duns' => $product->getDuns(),
+                'promotion_identifier' => $product->getPromotionIdentifier(),
+                'payment_sub_type_code' => $product->getPaymentSubTypeCode(),
+                'payment_instrument_identifier' => $product->getPaymentInstrumentIdentifier(),
+                'agent_identifier' => $agent->getAgentId(),
+                'agent_office_code' => $agent->getAgentOfficeCode(),
+                'assigned_agent_code' => $agent->getAssignedAgentCode(),
+                'partner_identifier' => $order->getPartnerIdentifier(),
+                'order_level_promotion_identifier' => $order->getOrderLevelPromotionIdentifier(),
+                'case_reference_identifier' => $order->getCaseLevelIdentifier(),
+                'five9_session_identifier' => $order->getFive9SessionIdentifier(),
+                'order_payment_type_code' => $order->getPaymentTypeCode(),
+                'customer_group_domain_code' => $order->getCustomerGroupDomainCode(),
+            )
+        );
+
+        $this->dandb->addUserEntitlements($userToken, $order);
+    }
+
     public function testUserTokenRefresh()
     {
         $email = 'test@yopmail.com';
