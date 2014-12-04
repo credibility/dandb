@@ -320,13 +320,13 @@ class DandB {
      * Entitle single product to an existing user
      *
      * @param string $userToken
-     * @param DandbOrder $order
+     * @param DandBOrder $order
      * @returns Response
      * @throws RequestException|LogicException|ParseException
      */
-    public function addSingleProductUserEntitlement($userToken, DandbOrder $order) {
-        $agent = $order->hasAgent() ? $order->getAgent() : new DandbAgent();
-        $product = $order->getFirstProduct() ? $order->getFirstProduct() : new DandbProduct();
+    public function addSingleProductUserEntitlement($userToken, DandBOrder $order) {
+        $agent = $order->hasAgent() ? $order->getAgent() : new DandBAgent();
+        $product = $order->getFirstProduct() ? $order->getFirstProduct() : new DandBProduct();
 
         return $this->requester->runPost('/v1.1/user/entitlement', array(
             'user_token' => $userToken,

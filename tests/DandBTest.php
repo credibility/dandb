@@ -194,8 +194,8 @@ class DandBTest extends PHPUnit_Framework_TestCase
     {
         $userToken = 'abcde123';
         $order = new DandBOrder();
-        $order->addProduct((new DandbProduct())->setProductId('1')->setPriceId('2'));
-        $agent = new DandbAgent();
+        $order->addProduct((new DandBProduct())->setProductId('1')->setPriceId('2'));
+        $agent = new DandBAgent();
 
         $this->setMockRequesterExpectations('runPost',
             '/v1.1/user/entitlements', array(
@@ -221,9 +221,9 @@ class DandBTest extends PHPUnit_Framework_TestCase
     {
         $userToken = 'abcde123';
         $order = new DandBOrder();
-        $order->addProduct((new DandbProduct())->setProductId('1')->setPriceId('2'));
+        $order->addProduct((new DandBProduct())->setProductId('1')->setPriceId('2'));
         $product = $order->getFirstProduct();
-        $agent = new DandbAgent();
+        $agent = new DandBAgent();
 
         $this->setMockRequesterExpectations('runPost',
             '/v1.1/user/entitlement', array(

@@ -17,11 +17,11 @@ class DandBOrder extends BaseModel {
 
 
     /**
-     * @param DandbProduct $product
+     * @param DandBProduct $product
      * @returns this
      */
 
-    public function addProduct(DandbProduct $product) {
+    public function addProduct(DandBProduct $product) {
         $this->products[] = $product;
         return $this;
     }
@@ -45,10 +45,10 @@ class DandBOrder extends BaseModel {
     }
 
     /**
-     * @param DandbAgent $agent
+     * @param DandBAgent $agent
      * @returns this
      */
-    public function setAgent(DandbAgent $agent) {
+    public function setAgent(DandBAgent $agent) {
         $this->agent = $agent;
         return $this;
     }
