@@ -288,6 +288,70 @@ class DandB {
         ));
     }
 
+
+    /**
+     * Entitle multiple products to an existing user
+     *
+     * @param string $userToken
+     * @param DandbOrder $order
+     * @returns Response
+     * @throws RequestException|LogicException|ParseException
+     */
+    public function addUserEntitlements($userToken, DandbOrder $order) {
+        $agent = $order->hasAgent() ? $order->getAgent() : new DandbAgent();
+
+        return $this->requester->runPost('/v1.1/user/entitlements', array(
+            'user_token' => $userToken,
+            'payment_type' => $order->getPaymentType(),
+            'orders' => $order->getProductsArray(),
+            'agent_identifier' => $agent->getAgentId(),
+            'agent_office_code' => $agent->getAgentOfficeCode(),
+            'assigned_agent_code' => $agent->getAssignedAgentCode(),
+            'partner_identifier' => $order->getPartnerIdentifier(),
+            'order_level_promotion_identifier' => $order->getOrderLevelPromotionIdentifier(),
+            'case_reference_identifier' => $order->getCaseLevelIdentifier(),
+            'five9_session_identifier' => $order->getFive9SessionIdentifier(),
+            'order_payment_type_code' => $order->getPaymentTypeCode(),
+            'customer_group_domain_code' => $order->getCustomerGroupDomainCode(),
+        ));
+    }
+
+    /**
+     * Entitle single product to an existing user
+     *
+     * @param string $userToken
+     * @param DandbOrder $order
+     * @returns Response
+     * @throws RequestException|LogicException|ParseException
+     */
+    public function addSingleProductUserEntitlement($userToken, DandbOrder $order) {
+        $agent = $order->hasAgent() ? $order->getAgent() : new DandbAgent();
+        $product = $order->getFirstProduct() ? $order->getFirstProduct() : new DandbProduct();
+
+        return $this->requester->runPost('/v1.1/user/entitlement', array(
+            'user_token' => $userToken,
+            'payment_type' => $order->getPaymentType(),
+            'send_confirmation_email' => $order->getSendConfirmationEmail(),
+            'product_id' => $product->getProductId(),
+            'price_id' => $product->getPriceId(),
+            'quantity' => $product->getQuantity(),
+            'duns' => $product->getDuns(),
+            'promotion_identifier' => $product->getPromotionIdentifier(),
+            'payment_sub_type_code' => $product->getPaymentSubTypeCode(),
+            'payment_instrument_identifier' => $product->getPaymentInstrumentIdentifier(),
+            'agent_identifier' => $agent->getAgentId(),
+            'agent_office_code' => $agent->getAgentOfficeCode(),
+            'assigned_agent_code' => $agent->getAssignedAgentCode(),
+            'partner_identifier' => $order->getPartnerIdentifier(),
+            'order_level_promotion_identifier' => $order->getOrderLevelPromotionIdentifier(),
+            'case_reference_identifier' => $order->getCaseLevelIdentifier(),
+            'five9_session_identifier' => $order->getFive9SessionIdentifier(),
+            'order_payment_type_code' => $order->getPaymentTypeCode(),
+            'customer_group_domain_code' => $order->getCustomerGroupDomainCode(),
+        ));
+    }
+
+
     /**
      * Returns new user token based on refresh token from
      * the User Token call
