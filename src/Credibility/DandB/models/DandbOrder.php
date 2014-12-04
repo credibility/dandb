@@ -32,7 +32,7 @@ class DandBOrder extends BaseModel {
      */
     public function setPaymentType($type) {
         $this->paymentType = $type;
-        return this;
+        return $this;
     }
 
     /**
@@ -41,6 +41,7 @@ class DandBOrder extends BaseModel {
      */
     public function setSendConfirmationEmail(bool $sendEmail) {
         $this->sendConfirmationEmail = $sendEmail;
+        return $this;
     }
 
     /**
