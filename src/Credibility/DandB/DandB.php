@@ -304,7 +304,7 @@ class DandB {
         return $this->requester->runPost('/v1.1/user/entitlements', array(
             'user_token' => $userToken,
             'payment_type' => $order->getPaymentType(),
-            'orders' => $order->getProductsArray(),
+            'orders' => json_encode($order->getProductsArray()),
             'agent_identifier' => $agent->getAgentId(),
             'agent_office_code' => $agent->getAgentOfficeCode(),
             'assigned_agent_code' => $agent->getAssignedAgentCode(),
