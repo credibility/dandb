@@ -221,10 +221,32 @@ class DandBTest extends PHPUnit_Framework_TestCase
     public function testAddSingleProductUserEntitlement()
     {
         $userToken = 'abcde123';
-        $order = new Models\DandBOrder();
-        $order->addProduct((new Models\DandBProduct())->setProductId('1')->setPriceId('2'));
+        $order = (new Models\DandBOrder())
+            ->setPaymentTypeCode('FREE')
+            ->setOrderLevelPromotionIdentifier(1)
+            ->setFive9SessionIdentifier(1)
+            ->setCustomerGroupDomainCode(1)
+            ->setCaseLevelIdentifier(1)
+            ->setPaymentType('FREE')
+            ->setPartnerIdentifier(1)
+            ->setSendConfirmationEmail(false);
+
+        $order->addProduct(
+            (new Models\DandBProduct())
+                ->setProductId('1')
+                ->setPriceId('2')
+                ->setQuantity(1)
+                ->setPromotionIdentifier(null)
+                ->setPaymentSubTypeCode('FREE')
+                ->setPaymentInstrumentIdentifier('FREE')
+        );
         $product = $order->getFirstProduct();
-        $agent = new Models\DandBAgent();
+        $agent = (new Models\DandBAgent())
+                    ->setAssignedAgentCode(1)
+                    ->setAgentOfficeCode(1)
+                    ->setAgentId(1);
+
+        $order->setAgent($agent);
 
         $this->setMockRequesterExpectations('runPost',
             '/v1.1/user/entitlement', array(

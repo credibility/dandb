@@ -36,10 +36,10 @@ class DandBOrder extends BaseModel {
     }
 
     /**
-     * @param bool $sendEmail - defaults is false
+     * @param $sendEmail - defaults is false
      * @returns this
      */
-    public function setSendConfirmationEmail(bool $sendEmail) {
+    public function setSendConfirmationEmail($sendEmail) {
         $this->sendConfirmationEmail = $sendEmail;
         return $this;
     }
