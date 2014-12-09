@@ -51,4 +51,9 @@ class ResponseErrorCodes {
     CONST USER_NOT_FOUND                                    = "USR032";
     CONST INCORRECT_USER_TYPE                               = "USR033";
 
+
+    public function getConstant($code) {
+        return constant('self::' . $code);
+    }
+
 }
