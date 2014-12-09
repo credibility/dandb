@@ -127,6 +127,19 @@ class DandB {
     }
 
     /**
+     * Gets a page from the CMS
+     *
+     * @param string $page
+     * @param string $language - valid params: 'en', 'fr'
+     * @return Response
+     * @throws RequestException|LogicException|ParseException
+     */
+
+    public function getPageFromDandBCMS($pageName, $language = 'en') {
+        return $this->requester->runGet('/v1/content/' . $pageName . '/' . $language);
+    }
+
+    /**
      * Searches businesses by phone number
      *
      * @param $phone
@@ -239,6 +252,7 @@ class DandB {
      * @param  $oldPassword
      * @param  $newPassword
      * @return Response
+     * @throws RequestException|LogicException|ParseException
      */
     public function passwordChange($userToken, $oldPassword, $newPassword)
     {
@@ -258,6 +272,7 @@ class DandB {
      * @param  $password
      * @param  $acceptedTOS must be 1
      * @return Response
+     * @throws RequestException|LogicException|ParseException
      */
     public function userRegister($email, $first_name, $last_name, $accepted_tos, $password=null, $phone_number=null, $address_line_1=null, $address_line_2=null, $address_line_3=null, $city=null, $state_code=null, $postal_code=null, $source=null)
     {
@@ -272,6 +287,22 @@ class DandB {
         }
 
         return $this->requester->runPost('/v1.1/user/register', $params);
+    }
+
+
+    /**
+     * Accept TOS
+     * @param string|null $userToken
+     * @param string|null $email
+     * @return Response
+     * @throws RequestException|LogicException|ParseException
+     */
+    public function userAccceptTOS($userToken = null, $email = null) {
+        if (empty($userToken) && empty($userToken)) {
+            throw new \InvalidArgumentException('You must provide either a user token or an email address');
+        }
+        $data = !empty($userToken) ? array('user_token' => $userToken) : array('email' => $email);
+        return $this->requester->runPost('/v1/user/accept-tos', $data);
     }
 
     /**
