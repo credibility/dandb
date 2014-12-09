@@ -12,6 +12,9 @@ class Response implements ToArrayInterface {
     /** @var int */
     protected $status;
 
+    /** var int */
+    protected $errorCode;
+
     /**
      * Creates a response object
      * @param ResponseInterface $responseInterface
@@ -21,6 +24,7 @@ class Response implements ToArrayInterface {
     {
         $this->response = $responseInterface->json();
         $this->status = isset($this->response['meta']['code']) ? $this->response['meta']['code'] : 500;
+        $this->errorCode = isset($this->response['meta']['error_code']) ? $this->response['meta']['error_code'] : null;
     }
 
     /**
@@ -76,4 +80,27 @@ class Response implements ToArrayInterface {
     {
         return $this->response;
     }
+
+    /**
+     * Get the error code if it is set
+     *
+     * @returns int|null
+     */
+    public function getErrorCode() {
+        return $this->errorCode;
+    }
+
+    /**
+     * Compare error code with passed in constant
+     * @var string $code
+     *
+     * @returns bool
+     */
+    public function hasErrorCode($code) {
+        if (isset(ResponseErrorCodes::$code) && ResponseErrorCodes::$code === $this->getErrorCode()) {
+            return true;
+        }
+        return false;
+    }
+
 }
