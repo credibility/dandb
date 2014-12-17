@@ -349,6 +349,18 @@ class DandB {
     }
 
     /**
+     * Returns Product Recommendations based on DUNS Number
+     * Manhattan Project
+     *
+     * @param $duns
+     * @return Response
+     * @throws RequestException|LogicException|ParseException
+     */
+    public function getProductRecommendations($duns) {
+        return $this->requester->runGet("/v1/business/$duns/recommended-products");
+    }
+
+    /**
      * Entitle single product to an existing user
      *
      * @param string $userToken
