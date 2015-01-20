@@ -162,7 +162,7 @@ class DandB {
      */
     public function verifiedProfile($businessId)
     {
-        return $this->requester->runGet("/v1/verified/$businessId", array());
+        return $this->requester->runGet("/v2/verified/$businessId", array());
     }
 
     /**

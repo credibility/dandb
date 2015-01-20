@@ -54,7 +54,7 @@ class DandBTest extends PHPUnit_Framework_TestCase
         $businessId = '123';
 
         $this->setMockRequesterExpectations('runGet',
-            "/v1/verified/$businessId", array()
+            "/v2/verified/$businessId", array()
         );
 
         $this->dandb->verifiedProfile($businessId);
