@@ -1,11 +1,8 @@
 <?php namespace Credibility\DandB;
 
 use Credibility\DandB\Models;
-use Credibility\DandB\Response;
 use GuzzleHttp\Exception\ParseException;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Client;
-use GuzzleHttp\Message\ResponseInterface;
 use Credibility\DandB\Cache\CacheableInterface;
 use LogicException;
 

@@ -1,6 +1,6 @@
 {
     "name": "credibility/dandb",
-    "description": "PHP Wrapper for Dun & Bradstreet Credibility Corp. API",
+    "description": "PHP Wrapper for Dun & Bradstreet Emerging Business API",
     "license": "MIT",
     "authors": [
         {
