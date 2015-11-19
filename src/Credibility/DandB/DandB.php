@@ -392,6 +392,25 @@ class DandB {
         ));
     }
 
+    /**
+     * @param $userEmail    User email address of the recipient of.
+     * @param $displayName  Name of the recipient of the email.
+     * @param $folderName   The Responsys folder of this email.
+     * @param $campaignName The Responsys campaign name of this email.
+     * @param $messageId    Message identifier used for tracking this email.
+     * @param $options      array of data required by the Responsys template.
+     * @return Response
+     */
+    public function postEmail($userEmail, $displayName, $folderName, $campaignName, $messageId, array $options) {
+        return $this->requester->runPost('/v1.1/email', array(
+            'user_email' => $userEmail,
+            'display_name' => $displayName,
+            'folder_name' => $folderName,
+            'campaign_name' => $campaignName,
+            'message_id' => $messageId,
+            'options' => json_encode($options),
+        ));
+    }
 
     /**
      * Returns new user token based on refresh token from
