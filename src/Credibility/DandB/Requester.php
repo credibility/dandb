@@ -56,12 +56,30 @@ class Requester {
         return $this->formatRequest('POST', $uri, $requestData);
     }
 
+    public function runJsonPost($uri, $data = array(), $userToken = null)
+    {
+        $requestData = array(
+            'body' => json_encode($data)
+        );
+        return $this->formatJsonRequest('POST', $uri, $requestData, $userToken);
+    }
+
+    public function formatJsonRequest($method, $uri, $data = array(), $userToken = null)
+    {
+        if(is_null($this->accessToken)) {
+            $this->accessToken = $this->getAccessToken();
+        }
+        $requestParams = $this->createJsonRequestParams($data, $userToken);
+
+        return $this->executeJson($method, $uri, $requestParams);
+    }
+
     public function formatRequest($method, $uri, $data = array())
     {
         if(is_null($this->accessToken)) {
             $this->accessToken = $this->getAccessToken();
         }
-        $requestParams = $this->createRequestParams($data, $this->accessToken);
+        $requestParams = $this->createRequestParams($data);
 
         return $this->execute($method, $uri, $requestParams);
     }
@@ -73,6 +91,15 @@ class Requester {
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         $response = $this->guzzleClient->send($request);
         return new Response($response);
+    }
+
+    public function executeJson($method, $uri, $data)
+    {
+        $request = $this->guzzleClient->createRequest($method, $uri, $data);
+        /** @var ResponseInterface $response */
+        /** @noinspection PhpVoidFunctionResultUsedInspection */
+        $response = $this->guzzleClient->send($request);
+        return $response->json();
     }
 
     public function createRequestParams($data)
@@ -88,6 +115,23 @@ class Requester {
             );
             return $requestParams;
         }
+    }
+
+    public function createJsonRequestParams($data, $userToken)
+    {
+        $header = array('headers' => array());
+        $header['headers']['x-access-token'] = $this->accessToken;
+        $header['headers']['Content-Type'] = 'application/json';
+        if($userToken !== null)
+            $header['headers']['user-token'] = $userToken;
+
+        $requestParams = array_merge(
+            $header,
+            $data
+        );
+
+        return $requestParams;
+
     }
 
     public function getAccessToken()

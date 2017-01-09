@@ -445,4 +445,35 @@ class DandB {
         ));
     }
 
+    /**
+     * Return the user token from OAuth2 auth code
+     *
+     * @see DandB::authCode
+     * @param $authCode
+     * @return mixed json
+     */
+    public function getUserTokenFromAuthCode($authCode)
+    {
+        return $this->requester->runJsonPost('/v1/oauth2/token/authorization_code', array(
+            'code' => $authCode
+        ));
+    }
+
+    /**
+     * Return the auth code appended in the redirect url by providing the user token
+     * @param $clientId
+     * @param $redirectUrl
+     * @param $state
+     * @param $userToken
+     * @return mixed json
+     */
+    public function getAuthCodeFromUserToken($clientId, $redirectUrl, $state, $userToken)
+    {
+        return $this->requester->runJsonPost('/v1/oauth2/authorize/code', array(
+            'client_id' => $clientId,
+            "redirect_uri" => $redirectUrl,
+            "state" => $state
+        ), $userToken);
+    }
+
 }

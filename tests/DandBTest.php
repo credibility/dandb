@@ -14,8 +14,6 @@ class DandBTest extends PHPUnit_Framework_TestCase
     /** @var MockInterface */
     protected $mockRequester;
 
-    private $testAccessToken;
-
     public function setUp()
     {
         $this->mockRequester = m::mock('Credibility\DandB\Requester');
@@ -409,6 +407,40 @@ class DandBTest extends PHPUnit_Framework_TestCase
 
         $this->dandb->businessSearchByNameAddress($name, $state, null, $city);
     }
+
+    public function testGetUserTokenFromAuthCode()
+    {
+        $authCode = '61b7ae10ff4a22d82ef6b45dedc4182aebcfee28';
+
+        $this->setMockRequesterExpectations('runJsonPost',
+            '/v1/oauth2/token/authorization_code', array(
+                'code' => $authCode
+            )
+        );
+
+        $this->dandb->getUserTokenFromAuthCode($authCode);
+    }
+
+
+    public function testGetAuthCodeFromUserToken()
+    {
+        $clientId = 'credrev';
+        $redirectUrl = 'https://dashboard-qa.malibucoding.com/services/v1/from-external';
+        $state = 'test';
+        $userToken = 'test-token';
+
+        $this->setJsonMockRequesterExpectations('runJsonPost',
+            '/v1/oauth2/authorize/code', array(
+                'client_id' => $clientId,
+                'redirect_uri' => $redirectUrl,
+                'state' => $state
+            ),
+            $userToken
+        );
+
+        $this->dandb->getAuthCodeFromUserToken($clientId, $redirectUrl, $state, $userToken);
+    }
+
     private function setMockRequesterExpectations(
         $mockRequesterRequest,
         $owlEndpoint,
@@ -418,4 +450,13 @@ class DandBTest extends PHPUnit_Framework_TestCase
             ->once()->withArgs([$owlEndpoint, $args]);
     }
 
+    private function setJsonMockRequesterExpectations(
+        $mockRequesterRequest,
+        $owlEndpoint,
+        array $args,
+        $userToken
+    ) {
+        $this->mockRequester->shouldReceive($mockRequesterRequest)
+            ->once()->withArgs([$owlEndpoint, $args, $userToken]);
+    }
 }
