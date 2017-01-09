@@ -219,6 +219,17 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->assertArrayHasKey('business_name', $response->getResponseData());
     }
 
+    public function testRunJsonPost()
+    {
+        $testArray = $this->setHttpMethodExpectations();
+        $mockAccessToken = 'test-token';
+
+        $response = $this->requester->runJsonPost('test-uri', $testArray, $mockAccessToken);
+
+        $this->assertTrue($response->isValid());
+        $this->assertArrayHasKey('business_name', $response->getResponseData());
+    }
+
     protected function getMockResponseInterface($data)
     {
         $mockResponse = m::mock('GuzzleHttp\Message\ResponseInterface');
