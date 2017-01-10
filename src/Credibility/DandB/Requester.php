@@ -56,20 +56,20 @@ class Requester {
         return $this->formatRequest('POST', $uri, $requestData);
     }
 
-    public function runJsonPost($uri, $data = array())
+    public function runJsonPost($uri, $data = array(), $userToken = null)
     {
         $requestData = array(
             'body' => json_encode($data)
         );
-        return $this->formatJsonRequest('POST', $uri, $requestData);
+        return $this->formatJsonRequest('POST', $uri, $requestData, $userToken);
     }
 
-    public function formatJsonRequest($method, $uri, $data = array())
+    public function formatJsonRequest($method, $uri, $data = array(), $userToken)
     {
         if(is_null($this->accessToken)) {
             $this->accessToken = $this->getAccessToken();
         }
-        $requestParams = $this->createJsonRequestParams($data);
+        $requestParams = $this->createJsonRequestParams($data, $userToken);
 
         return $this->executeJson($method, $uri, $requestParams);
     }
@@ -117,19 +117,13 @@ class Requester {
         }
     }
 
-    public function createJsonRequestParams($data)
+    public function createJsonRequestParams($data, $userToken)
     {
         $header = array('headers' => array());
         $header['headers']['x-access-token'] = $this->accessToken;
         $header['headers']['Content-Type'] = 'application/json';
-        if(isset($data['body'])) {
-            $requestBodyArray = json_decode($data['body'], true);
-            if(isset($requestBodyArray['user_token'])) {
-                $header['headers']['user-token'] = $requestBodyArray['user_token'];
-                unset($requestBodyArray['user_token']);
-                $data['body'] = json_encode($requestBodyArray);
-            }
-        }
+        if($userToken !== null)
+            $header['headers']['user-token'] = $userToken;
 
         $requestParams = array_merge(
             $header,

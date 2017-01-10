@@ -433,12 +433,12 @@ class DandBTest extends PHPUnit_Framework_TestCase
             '/v1/oauth2/authorize/code', array(
                 'client_id' => $clientId,
                 'redirect_uri' => $redirectUrl,
-                'state' => $state,
-                'user_token' => $userToken
-            )
+                'state' => $state
+            ),
+            $userToken
         );
 
-        $this->dandb->getAuthCodeFromUserToken($clientId, $redirectUrl, $state);
+        $this->dandb->getAuthCodeFromUserToken($clientId, $redirectUrl, $state, $userToken);
     }
 
     private function setMockRequesterExpectations(

@@ -472,9 +472,8 @@ class DandB {
         return $this->requester->runJsonPost('/v1/oauth2/authorize/code', array(
             'client_id' => $clientId,
             "redirect_uri" => $redirectUrl,
-            "state" => $state,
-            "user_token" => $userToken
-        ));
+            "state" => $state
+        ), $userToken);
     }
 
 }
