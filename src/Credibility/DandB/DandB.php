@@ -450,7 +450,7 @@ class DandB {
      *
      * @see DandB::authCode
      * @param $authCode
-     * @return Response
+     * @return mixed json
      */
     public function getUserTokenFromAuthCode($authCode)
     {
@@ -464,7 +464,7 @@ class DandB {
      * @param $clientId
      * @param $redirectUrl
      * @param $state
-     * @return Response
+     * @return mixed json
      */
     public function getAuthCodeFromUserToken($clientId, $redirectUrl, $state)
     {

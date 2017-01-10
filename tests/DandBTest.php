@@ -14,8 +14,6 @@ class DandBTest extends PHPUnit_Framework_TestCase
     /** @var MockInterface */
     protected $mockRequester;
 
-    private $testAccessToken;
-
     public function setUp()
     {
         $this->mockRequester = m::mock('Credibility\DandB\Requester');
@@ -428,12 +426,12 @@ class DandBTest extends PHPUnit_Framework_TestCase
     {
         $clientId = 'credrev';
         $redirectUrl = 'https://dashboard-qa.malibucoding.com/services/v1/from-external';
-        $state = '';
+        $state = 'test';
 
         $this->setMockRequesterExpectations('runJsonPost',
             '/v1/oauth2/authorize/code', array(
                 'client_id' => $clientId,
-                'redirect_url' => $redirectUrl,
+                'redirect_uri' => $redirectUrl,
                 'state' => $state
             )
         );

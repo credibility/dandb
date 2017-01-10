@@ -210,9 +210,7 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
     public function testRunPost()
     {
         $testArray = $this->setHttpMethodExpectations();
-        $mockAccessToken = 'test-token';
-
-        $response = $this->requester->runPost('test-uri', $testArray, $mockAccessToken);
+        $response = $this->requester->runPost('test-uri', $testArray);
 
         $this->assertInstanceOf('Credibility\DandB\Response', $response);
         $this->assertTrue($response->isValid());
@@ -221,13 +219,10 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
 
     public function testRunJsonPost()
     {
-        $testArray = $this->setHttpMethodExpectations();
-        $mockAccessToken = 'test-token';
-
-        $response = $this->requester->runJsonPost('test-uri', $testArray, $mockAccessToken);
-
-        $this->assertTrue($response->isValid());
-        $this->assertArrayHasKey('business_name', $response->getResponseData());
+        $data = '{"test": "data"}';
+        $testArray = $this->setHttpMethodAndReturnData($data);
+        $response = $this->requester->runJsonPost('test-uri', $testArray);
+        $this->assertJson($response);
     }
 
     protected function getMockResponseInterface($data)
@@ -281,8 +276,13 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
                 )
             )
         );
+        return $this->setHttpMethodAndReturnData($testArray);
+    }
+
+    private function setHttpMethodAndReturnData($data)
+    {
         $this->setMockAccessTokenCall();
-        $mockResponse = $this->getMockResponseInterface($testArray);
+        $mockResponse = $this->getMockResponseInterface($data);
         $mockRequest = $this->getMockRequestInterface();
 
         $this->mockGuzzle->shouldReceive('createRequest')
@@ -291,7 +291,7 @@ class RequesterTest extends PHPUnit_Framework_TestCase {
         $this->mockGuzzle->shouldReceive('send')
             ->with($mockRequest)
             ->andReturn($mockResponse);
-        return $testArray;
+        return $data;
     }
 
     private function setCacheExpectations($hasCacheData, $cacheData = null, $dataToCache = null)

@@ -99,7 +99,7 @@ class Requester {
         /** @var ResponseInterface $response */
         /** @noinspection PhpVoidFunctionResultUsedInspection */
         $response = $this->guzzleClient->send($request);
-        return json_decode($response, true);
+        return $response->json();
     }
 
     public function createRequestParams($data)
