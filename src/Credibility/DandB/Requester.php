@@ -64,7 +64,7 @@ class Requester {
         return $this->formatJsonRequest('POST', $uri, $requestData, $userToken);
     }
 
-    public function formatJsonRequest($method, $uri, $data = array(), $userToken)
+    public function formatJsonRequest($method, $uri, $data = array(), $userToken = null)
     {
         if(is_null($this->accessToken)) {
             $this->accessToken = $this->getAccessToken();
