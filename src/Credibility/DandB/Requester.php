@@ -135,8 +135,7 @@ class Requester {
             $header,
             $data
         );
-        echo "<pre>";
-        print_r($requestParams);
+
         return $requestParams;
 
     }
