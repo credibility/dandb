@@ -464,14 +464,16 @@ class DandB {
      * @param $clientId
      * @param $redirectUrl
      * @param $state
+     * @param $userToken
      * @return mixed json
      */
-    public function getAuthCodeFromUserToken($clientId, $redirectUrl, $state)
+    public function getAuthCodeFromUserToken($clientId, $redirectUrl, $state, $userToken)
     {
         return $this->requester->runJsonPost('/v1/oauth2/authorize/code', array(
             'client_id' => $clientId,
             "redirect_uri" => $redirectUrl,
-            "state" => $state
+            "state" => $state,
+            "user_token" => $userToken
         ));
     }
 

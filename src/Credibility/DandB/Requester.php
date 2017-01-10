@@ -69,7 +69,7 @@ class Requester {
         if(is_null($this->accessToken)) {
             $this->accessToken = $this->getAccessToken();
         }
-        $requestParams = $this->createRequestParams($data, $this->accessToken);
+        $requestParams = $this->createJsonRequestParams($data);
 
         return $this->executeJson($method, $uri, $requestParams);
     }
@@ -79,7 +79,7 @@ class Requester {
         if(is_null($this->accessToken)) {
             $this->accessToken = $this->getAccessToken();
         }
-        $requestParams = $this->createRequestParams($data, $this->accessToken);
+        $requestParams = $this->createRequestParams($data);
 
         return $this->execute($method, $uri, $requestParams);
     }
@@ -115,6 +115,30 @@ class Requester {
             );
             return $requestParams;
         }
+    }
+
+    public function createJsonRequestParams($data)
+    {
+        $header = array('headers' => array());
+        $header['headers']['x-access-token'] = $this->accessToken;
+        $header['headers']['Content-Type'] = 'application/json';
+        if(isset($data['body'])) {
+            $requestBodyArray = json_decode($data['body'], true);
+            if(isset($requestBodyArray['user_token'])) {
+                $header['headers']['user-token'] = $requestBodyArray['user_token'];
+                unset($requestBodyArray['user_token']);
+                $data['body'] = json_encode($requestBodyArray);
+            }
+        }
+
+        $requestParams = array_merge(
+            $header,
+            $data
+        );
+        echo "<pre>";
+        print_r($requestParams);
+        return $requestParams;
+
     }
 
     public function getAccessToken()
