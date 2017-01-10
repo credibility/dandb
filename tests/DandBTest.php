@@ -427,7 +427,7 @@ class DandBTest extends PHPUnit_Framework_TestCase
         $clientId = 'credrev';
         $redirectUrl = 'https://dashboard-qa.malibucoding.com/services/v1/from-external';
         $state = 'test';
-        $userToken = '546ffed4e45f1f58aacd6a0466202232ed60b9b3';
+        $userToken = 'test-token';
 
         $this->setMockRequesterExpectations('runJsonPost',
             '/v1/oauth2/authorize/code', array(
